@@ -88,7 +88,7 @@ def draw_track(event):
             xyR2 = x2-radius, y2-radius, x2+radius, y2+radius
             mycanvas.create_oval(xyR2)
 
-            ThirdClick = True
+            thirdClick = True
 
         else:
             # Récupération des coordonnées de la souris
@@ -166,7 +166,7 @@ if __name__ == "__main__":
     app.title("TrackMania Reloaded")
     app.geometry("720x480")
     app.minsize(640, 360)
-    app.iconbitmap("logo.ico")
+    app.iconbitmap("img/logo.ico")
     app.config(background=bg_color)
 
     # Afficher
