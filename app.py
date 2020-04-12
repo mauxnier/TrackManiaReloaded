@@ -14,7 +14,7 @@ Usage: python app.py
 
 # Importation de tkinter
 from tkinter import *
-
+import math
 
 """ https://stackoverflow.com/questions/22835289/how-to-get-tkinter-canvas-to-dynamically-resize-to-window-width """
 # Une sous-classe de Canvas pour redimensionner le canva en fonction de la window
@@ -40,14 +40,13 @@ class ResizingCanvas(Canvas):
         self.scale("all", 0, 0, wscale, hscale)
         """
 
-
 # Affiche les coordonnées de la souris dans la console
 def display_coordinates(event):
     x = event.x
     y = event.y
     print(x, y)
 
-
+# Définition des variables globales
 firstClick = True
 mycanvas = None
 x1 = 0
@@ -56,7 +55,8 @@ y1 = 0
 # Dessine des lignes entre chaque click de la souris
 def draw_track(event):
     global mycanvas, firstClick, x1, y1
-    trackWidth = 50
+    perimeter = 75
+    radius = perimeter / 2
     
     if firstClick:
         # Récupération des coordonnées de la souris
@@ -64,8 +64,11 @@ def draw_track(event):
         y1 = event.y
 
         # Création du cercle
-        xy1 = x1-trackWidth, y1-trackWidth, x1+trackWidth, y1+trackWidth
-        mycanvas.create_oval(xy1, width=2, outline="green")
+        xyP1 = x1-perimeter, y1-perimeter, x1+perimeter, y1+perimeter
+        mycanvas.create_oval(xyP1)
+
+        xyR1 = x1-radius, y1-radius, x1+radius, y1+radius
+        mycanvas.create_oval(xyR1)
 
         firstClick = False
         
@@ -75,12 +78,16 @@ def draw_track(event):
         y2 = event.y
 
         # Création du cercle
-        xy2 = x2-trackWidth, y2-trackWidth, x2+trackWidth, y2+trackWidth
-        mycanvas.create_oval(xy2, width=2, outline="black")
+        xyP2 = x2-perimeter, y2-perimeter, x2+perimeter, y2+perimeter
+        mycanvas.create_oval(xyP2)
 
-        # Création de la route
-        mycanvas.create_line(x1, y1-trackWidth, x2, y2-trackWidth)
-        mycanvas.create_line(x1, y1+trackWidth, x2, y2+trackWidth)
+        xyR2 = x2-radius, y2-radius, x2+radius, y2+radius
+        mycanvas.create_oval(xyR2)
+
+        """Création de la route"""
+        # Distance Euclidienne entre deux cercles
+        distance = math.sqrt((x1-x2)**2 + (y1-y2)**2)
+        
         
         # Création de l'angle
         #mycanvas.create_arc(xy, start=0, extent=360, fill="red")
