@@ -1,0 +1,119 @@
+# coding: utf-8
+
+"""TrackManiaReloaded : by el famoso Killian Monnier
+
+TrackManiaReloaded est un jeu bien connu des pilotes.
+
+Usage: python app.py
+-
+-
+-
+-
+
+"""
+
+# Importation de tkinter
+from tkinter import *
+
+
+""" https://stackoverflow.com/questions/22835289/how-to-get-tkinter-canvas-to-dynamically-resize-to-window-width """
+# Une sous-classe de Canvas pour redimensionner le canva en fonction de la window
+class ResizingCanvas(Canvas):
+    def __init__(self, parent, **kwargs):
+        Canvas.__init__(self, parent, **kwargs)
+        self.bind("<Configure>", self.on_resize)
+        self.height = self.winfo_reqheight()
+        self.width = self.winfo_reqwidth()
+
+    def on_resize(self, event):
+        # Détermine le ratio de l'ancien width/height au nouveau width/height
+        wscale = float(event.width) / self.width
+        hscale = float(event.height) / self.height
+        self.width = event.width
+        self.height = event.height
+
+        # Redimensionne le canvas
+        self.config(width = self.width, height = self.height)
+
+        # Redimensionne tout les objets avec le tag "all"
+        self.scale("all", 0, 0, wscale, hscale)
+
+
+# Affiche les coordonnées de la souris dans la console
+def display_coordinates(event):
+    x = event.x
+    y = event.y
+    print(x, y)
+
+firstClick = True
+mycanvas = None
+x1 = 0
+y1 = 0
+
+# Dessine des lignes entre chaque click de la souris
+def draw_line(event):
+    global mycanvas, firstClick, x1, y1
+
+    if firstClick:
+        print("true")
+        x1 = event.x
+        y1 = event.y
+        firstClick = False
+        
+    else:
+        print("false")
+        x2 = event.x
+        y2 = event.y
+
+        mycanvas.create_line(x1, y1, x2, y2, fill='black', width=10)
+        x1 = x2
+        y1 = y2
+
+bg_color = '#00AE4E'
+
+# The Application
+class Application(Tk):
+    def __init__(self):
+        """Constructeur de l'application"""
+        Tk.__init__(self)
+        self.start()
+
+    # Fonction de départ
+    def start(self):
+        # Création et packing du frame pour le texte et le bouton
+        self.myframe = Frame(self, bg=bg_color)
+        self.myframe.pack(expand=YES)
+
+        # Création et packing du texte et du bouton
+        self.label = Label(self.myframe, text="Bienvenue sur TrackMania\nReloaded", font=("calibri", 40), bg=bg_color, fg='white')
+        self.bouton = Button(self.myframe, text="Appuyez pour commencer ...", font=("calibri", 25), bg='white', fg=bg_color, command=self.trackmaker)
+        self.label.pack()
+        self.bouton.pack(pady=50)
+
+    # Fonction principale pour fabriquer le circuit
+    def trackmaker(self):
+        global mycanvas  
+        # Suppression du frame contenant le bouton et le texte
+        self.myframe.pack_forget()
+        
+        # Création et packing du canvas
+        mycanvas = ResizingCanvas(self, width=850, height=400, bg=bg_color, highlightthickness=0)
+        mycanvas.pack(fill=BOTH, expand=YES)
+
+        # Actions sur le canvas
+        mycanvas.bind('<Button-1>', display_coordinates)
+        mycanvas.bind('<Button-3>', draw_line)
+
+
+if __name__ == "__main__":
+    app = Application()
+
+    # Personnalisation de la fenêtre
+    app.title("TrackMania Reloaded")
+    app.geometry("720x480")
+    app.minsize(640, 360)
+    app.iconbitmap("logo.ico")
+    app.config(background=bg_color)
+
+    # Afficher
+    app.mainloop()
