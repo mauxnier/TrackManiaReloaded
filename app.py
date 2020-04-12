@@ -35,8 +35,10 @@ class ResizingCanvas(Canvas):
         # Redimensionne le canvas
         self.config(width = self.width, height = self.height)
 
+        """
         # Redimensionne tout les objets avec le tag "all"
         self.scale("all", 0, 0, wscale, hscale)
+        """
 
 
 # Affiche les coordonnées de la souris dans la console
@@ -45,29 +47,47 @@ def display_coordinates(event):
     y = event.y
     print(x, y)
 
+
 firstClick = True
 mycanvas = None
 x1 = 0
 y1 = 0
 
 # Dessine des lignes entre chaque click de la souris
-def draw_line(event):
+def draw_track(event):
     global mycanvas, firstClick, x1, y1
-
+    trackWidth = 50
+    
     if firstClick:
-        print("true")
+        # Récupération des coordonnées de la souris
         x1 = event.x
         y1 = event.y
+
+        # Création du cercle
+        xy1 = x1-trackWidth, y1-trackWidth, x1+trackWidth, y1+trackWidth
+        mycanvas.create_oval(xy1, width=2, outline="green")
+
         firstClick = False
         
     else:
-        print("false")
+        # Récupération des coordonnées de la souris
         x2 = event.x
         y2 = event.y
 
-        mycanvas.create_line(x1, y1, x2, y2, fill='black', width=10)
+        # Création du cercle
+        xy2 = x2-trackWidth, y2-trackWidth, x2+trackWidth, y2+trackWidth
+        mycanvas.create_oval(xy2, width=2, outline="black")
+
+        # Création de la route
+        mycanvas.create_line(x1, y1-trackWidth, x2, y2-trackWidth)
+        mycanvas.create_line(x1, y1+trackWidth, x2, y2+trackWidth)
+        
+        # Création de l'angle
+        #mycanvas.create_arc(xy, start=0, extent=360, fill="red")
+
         x1 = x2
         y1 = y2
+
 
 bg_color = '#00AE4E'
 
@@ -102,7 +122,7 @@ class Application(Tk):
 
         # Actions sur le canvas
         mycanvas.bind('<Button-1>', display_coordinates)
-        mycanvas.bind('<Button-3>', draw_line)
+        mycanvas.bind('<Button-3>', draw_track)
 
 
 if __name__ == "__main__":
