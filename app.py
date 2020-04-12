@@ -48,13 +48,16 @@ def display_coordinates(event):
 
 # Définition des variables globales
 firstClick = True
+thirdClick = False
 mycanvas = None
 x1 = 0
 y1 = 0
+x2 = 0
+y2 = 0
 
 # Dessine des lignes entre chaque click de la souris
 def draw_track(event):
-    global mycanvas, firstClick, x1, y1
+    global mycanvas, firstClick, thirdClick, x1, y1, x2, y2
     perimeter = 75
     radius = perimeter / 2
     
@@ -73,27 +76,51 @@ def draw_track(event):
         firstClick = False
         
     else:
-        # Récupération des coordonnées de la souris
-        x2 = event.x
-        y2 = event.y
+        if not thirdClick:
+            # Récupération des coordonnées de la souris
+            x2 = event.x
+            y2 = event.y
 
-        # Création du cercle
-        xyP2 = x2-perimeter, y2-perimeter, x2+perimeter, y2+perimeter
-        mycanvas.create_oval(xyP2)
+            # Création du cercle
+            xyP2 = x2-perimeter, y2-perimeter, x2+perimeter, y2+perimeter
+            mycanvas.create_oval(xyP2)
 
-        xyR2 = x2-radius, y2-radius, x2+radius, y2+radius
-        mycanvas.create_oval(xyR2)
+            xyR2 = x2-radius, y2-radius, x2+radius, y2+radius
+            mycanvas.create_oval(xyR2)
 
-        """Création de la route"""
-        # Distance Euclidienne entre deux cercles
-        distance = math.sqrt((x1-x2)**2 + (y1-y2)**2)
-        
-        
-        # Création de l'angle
-        #mycanvas.create_arc(xy, start=0, extent=360, fill="red")
+            ThirdClick = True
 
-        x1 = x2
-        y1 = y2
+        else:
+            # Récupération des coordonnées de la souris
+            x3 = event.x
+            y3 = event.y
+
+            # Création du cercle
+            xyP3 = x3-perimeter, y3-perimeter, x3+perimeter, y3+perimeter
+            mycanvas.create_oval(xyP3)
+
+            xyR3 = x3-radius, y3-radius, x3+radius, y3+radius
+            mycanvas.create_oval(xyR3)
+
+            """Création de la route"""
+            """
+            # Distance Euclidienne entre deux cercles
+            distanceAB = math.sqrt((x1-x2)**2 + (y1-y2)**2)
+            distanceBC = math.sqrt((x2-x3)**2 + (y2-y3)**2)
+            distanceAC = math.sqrt((x1-x3)**2 + (y1-y3)**2)
+
+            mycanvas.create_line(x1, y1-perimeter, x2, y2-perimeter)
+            mycanvas.create_line(x1, y1-perimeter, x2, y2)
+            mycanvas.create_line(x1, y1, x2, y2)
+            mycanvas.create_line(x1, y1, x1, y1-perimeter)
+            
+            # Création de l'angle
+            #mycanvas.create_arc(xy, start=0, extent=360, fill="red")
+            """
+            x1 = x2
+            y1 = y2
+            x2 = x3
+            y2 = y3
 
 
 bg_color = '#00AE4E'
