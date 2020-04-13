@@ -12,7 +12,7 @@ Usage: python app.py
 
 """
 
-# Importation de tkinter
+# Importation de librairies
 from tkinter import *
 import math
 
@@ -48,7 +48,6 @@ def display_coordinates(event):
 
 # Définition des variables globales
 firstClick = True
-thirdClick = False
 mycanvas = None
 x1 = 0
 y1 = 0
@@ -57,9 +56,10 @@ y2 = 0
 
 # Dessine des lignes entre chaque click de la souris
 def draw_track(event):
-    global mycanvas, firstClick, thirdClick, x1, y1, x2, y2
-    perimeter = 75
-    radius = perimeter / 2
+    global mycanvas, firstClick, x1, y1
+    radius1 = 100
+    radius2 = radius1 / 2
+    radius3 = radius1-radius2
     
     if firstClick:
         # Récupération des coordonnées de la souris
@@ -67,60 +67,78 @@ def draw_track(event):
         y1 = event.y
 
         # Création du cercle
-        xyP1 = x1-perimeter, y1-perimeter, x1+perimeter, y1+perimeter
-        mycanvas.create_oval(xyP1)
-
-        xyR1 = x1-radius, y1-radius, x1+radius, y1+radius
+        xyR1 = x1-radius1, y1-radius1, x1+radius1, y1+radius1
         mycanvas.create_oval(xyR1)
 
         firstClick = False
         
     else:
-        if not thirdClick:
-            # Récupération des coordonnées de la souris
-            x2 = event.x
-            y2 = event.y
+        # Récupération des coordonnées de la souris
+        x2 = event.x
+        y2 = event.y
 
-            # Création du cercle
-            xyP2 = x2-perimeter, y2-perimeter, x2+perimeter, y2+perimeter
-            mycanvas.create_oval(xyP2)
+        # Création du cercle
+        xyR1 = x2-radius1, y2-radius1, x2+radius1, y2+radius1
+        mycanvas.create_oval(xyR1)
 
-            xyR2 = x2-radius, y2-radius, x2+radius, y2+radius
-            mycanvas.create_oval(xyR2)
+        xyR2 = x1-radius2, y1-radius2, x1+radius2, y1+radius2
+        mycanvas.create_oval(xyR2)
 
-            thirdClick = True
+        xyR3 = x2-radius3, y2-radius3, x2+radius3, y2+radius3
+        mycanvas.create_oval(xyR3)
 
-        else:
-            # Récupération des coordonnées de la souris
-            x3 = event.x
-            y3 = event.y
+        """Création de la route : https://gieseanw.wordpress.com/2012/09/12/finding-external-tangent-points-for-two-circles/"""
+        a = x1
+        b = y1
 
-            # Création du cercle
-            xyP3 = x3-perimeter, y3-perimeter, x3+perimeter, y3+perimeter
-            mycanvas.create_oval(xyP3)
+        # Distance Euclidienne entre deux cercles : D
+        #mycanvas.create_line(x1, y1, x2, y2)
+        distance = math.sqrt((x1-x2)**2 + (y1-y2)**2)
+        D = distance
+        print("D = distance =", D)
 
-            xyR3 = x3-radius, y3-radius, x3+radius, y3+radius
-            mycanvas.create_oval(xyR3)
+        # H
+        #mycanvas.create_line(x1, y1-radius2, x2, y2)
+        H = math.sqrt(D**2 - (radius1-radius2)**2)
+        print("H :", H)
 
-            """Création de la route"""
-            """
-            # Distance Euclidienne entre deux cercles
-            distanceAB = math.sqrt((x1-x2)**2 + (y1-y2)**2)
-            distanceBC = math.sqrt((x2-x3)**2 + (y2-y3)**2)
-            distanceAC = math.sqrt((x1-x3)**2 + (y1-y3)**2)
+        # X = H
+        #mycanvas.create_line(x1, y1-radius1, x2, y2-radius3)
+        X = H
+        print("X = H =", X)
 
-            mycanvas.create_line(x1, y1-perimeter, x2, y2-perimeter)
-            mycanvas.create_line(x1, y1-perimeter, x2, y2)
-            mycanvas.create_line(x1, y1, x2, y2)
-            mycanvas.create_line(x1, y1, x1, y1-perimeter)
-            
-            # Création de l'angle
-            #mycanvas.create_arc(xy, start=0, extent=360, fill="red")
-            """
-            x1 = x2
-            y1 = y2
-            x2 = x3
-            y2 = y3
+        # Y
+        #mycanvas.create_line(x1, y1-radius1, x2, y2)
+        Y = math.sqrt(H**2 + radius2**2)
+        print("Y :", Y)
+
+        # Theta
+        theta = math.acos((radius1**2 + D**2 - Y**2) / (2 * radius1 * D))
+        theta = theta + math.atan2(y2 - y1, x2 - x1)
+        print("Theta :", theta)
+
+        # Xt : Point de la tangente externe
+        e1R1 = x1 + radius1 * math.cos(theta)
+        f1R1 = y1 + radius1 * math.sin(theta)
+        Xt1R1 = (e1R1,f1R1)
+
+        e2R1 = x2 + radius1 * math.cos(theta)
+        f2R1 = y2 + radius1 * math.sin(theta)
+        Xt2R1 = (e2R1,f2R1)
+
+        e1R2 = x1 + radius2 * math.cos(theta)
+        f1R2 = y1 + radius2 * math.sin(theta)
+        Xt1R2 = (e1R2, f1R2)
+
+        e2R2 = x2 + radius2 * math.cos(theta)
+        f2R2 = y2 + radius2 * math.sin(theta)
+        Xt2R2 = (e2R2, f2R2)
+
+        mycanvas.create_line(Xt1R1, Xt2R1, fill='red')
+        mycanvas.create_line(Xt1R2, Xt2R2, fill='red')
+    
+        x1 = x2
+        y1 = y2
 
 
 bg_color = '#00AE4E'
