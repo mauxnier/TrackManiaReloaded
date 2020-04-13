@@ -88,13 +88,14 @@ def draw_track(event):
         mycanvas.create_oval(xyR3)
 
         """Création de la route : https://gieseanw.wordpress.com/2012/09/12/finding-external-tangent-points-for-two-circles/"""
-        a = x1
-        b = y1
 
         # Distance Euclidienne entre deux cercles : D
         #mycanvas.create_line(x1, y1, x2, y2)
-        distance = math.sqrt((x1-x2)**2 + (y1-y2)**2)
-        D = distance
+        distanceAB = math.sqrt((x1-x2)**2 + (y1-y2)**2)
+        distanceBC = math.sqrt((x2-x3)**2 + (y2-y3)**2)
+        distanceAC = math.sqrt((x1-x3)**2 + (y1-y3)**2)
+        
+        D = distanceAB
         print("D = distance =", D)
 
         # H
@@ -134,9 +135,32 @@ def draw_track(event):
         f2R2 = y2 + radius2 * math.sin(theta)
         Xt2R2 = (e2R2, f2R2)
 
+        print("Xt1R1 =", Xt1R1, "Xt2R1 =", Xt2R1, "Xt1R2 =", Xt1R2, "Xt2R2 =", Xt2R2)
         mycanvas.create_line(Xt1R1, Xt2R1, fill='red')
         mycanvas.create_line(Xt1R2, Xt2R2, fill='red')
+
+        # Yt : Point de la tangente interne
+       
+        g1R1 = x1 - radius1 * math.cos(theta)
+        h1R1 = y1 - radius1 * math.sin(theta)
+        Yt1R1 = (g1R1,h1R1)
+
+        g2R1 = x2 + radius1 * math.cos(theta)
+        h2R1 = y2 + radius1 * math.sin(theta)
+        Yt2R1 = (g2R1,h2R1)
+
+        g1R2 = x1 - radius2 * math.cos(theta)
+        h1R2 = y1 - radius2 * math.sin(theta)
+        Yt1R2 = (g1R2, h1R2)
+
+        g2R2 = x2 + radius2 * math.cos(theta)
+        h2R2 = y2 + radius2 * math.sin(theta)
+        Yt2R2 = (g2R2, h2R2)
     
+        print("Yt1R1 =", Yt1R1, "Yt2R1 =", Yt2R1, "Yt1R2 =", Yt1R2, "Yt2R2 =", Yt2R2)
+        mycanvas.create_line(Yt1R1, Yt2R2, fill='blue')
+        mycanvas.create_line(Yt1R2, Yt2R1, fill='blue')
+
         x1 = x2
         y1 = y2
 
