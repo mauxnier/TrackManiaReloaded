@@ -1,5 +1,5 @@
 # TrackManiaReloaded
-Ma participation à la GameJam de Nathan : https://github.com/AlfredTheHacktivist
+Ma participation à la GameJam de Nathan
 
 # Documentation
 -   [Finding External Tangent Points for Two Circles](https://gieseanw.wordpress.com/2012/09/12/finding-external-tangent-points-for-two-circles/)
